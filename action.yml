@@ -1,0 +1,12 @@
+name: 'Run Julia package tests'
+description: 'Run the tests in a Julia package'
+inputs:
+  inline:
+    description: 'Value passed to the --inline flag. Options: yes | no. Default value: yes.'
+    default: 'yes'
+  
+runs:
+  using: "composite"
+  steps: 
+  - run: julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --project -e 'using Pkg; Pkg.test(coverage=true)'
+    shell: bash
