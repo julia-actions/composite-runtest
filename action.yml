@@ -1,12 +1,18 @@
 name: 'Run Julia package tests'
 description: 'Run the tests in a Julia package'
 inputs:
+  coverage:
+    description: 'Value determining whether to test with coverage or not. Options: true | false. Default value: true.'
+    default: 'true'
+  force_latest_compat:
+    description: 'If true, then, for each `[compat]` entry in the active project, only the latest compatible version will be allowed. Options: true | false. Default value: false.'
+    default: 'false'
   inline:
     description: 'Value passed to the --inline flag. Options: yes | no. Default value: yes.'
     default: 'yes'
-  
+
 runs:
   using: "composite"
   steps: 
-  - run: julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --project -e 'using Pkg; Pkg.test(coverage=true)'
+  - run: julia --color=yes --check-bounds=yes --inline=${{ inputs.inline }} --project -e 'using Pkg; kwargs = Dict{Symbol, Any}(); kwargs[:coverage] = ${{ inputs.coverage }; ${{ inputs.force_latest_compat }} && (kwargs[:force_latest_compat] = ${{ inputs.force_latest_compat }}); Pkg.test(; kwargs...)'
     shell: bash
